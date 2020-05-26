@@ -15,6 +15,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Brightness3Icon from '@material-ui/icons/Brightness3';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
+import Avatar from '@material-ui/core/Avatar';
 import PropTypes from 'prop-types'
 const drawerWidth = 240;
 
@@ -42,7 +43,10 @@ function CustomAppBar(props) {
     const [state, setState] = React.useState({
         checkedB: false,
     });
+    const [prevImage,setPrevImage]=useState()
+const perviewImage=()=>{
 
+}
     const handleChange = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
         if(state.checkedB===true){
@@ -65,9 +69,19 @@ function CustomAppBar(props) {
         setOpen(false);
     };
     const [username,setUsername]=useState()
-    useEffect(()=>{
-        localStorage.getItem('username') ? setUsername(localStorage.getItem('username')) : null
-    })
+    const [profilePicture,setProfilePicture]=useState()
+    const AddPorfilePicture=async(e)=>{
+        setProfilePicture(e.target.files[0])
+        const formData=new FormData()
+        formData.append('profilePicture',profilePicture)
+        formData.append('username',username)
+        axios.post('http://localhost:8080/getUserInformation',{formData}).then(res=>console.log(res.data)).catch(res=>console.log(res.data))
+        console.log(profilePicture)
+    }
+        useEffect(()=>{
+        setUsername(localStorage.getItem('username'))
+        axios.post('http://localhost:8080/getUserInformation',{username}).then(res=>console.log(res)).catch(res=>console.log(res))
+    },[username])
 return(
     <AppBar
         position="fixed"
@@ -89,12 +103,25 @@ return(
                 </IconButton>*/}
                 <IconButton
                     edge="end"
-                    aria-label="account of current user"
                     aria-haspopup="true"
                     color="inherit"
+                    aria-label="upload picture" component="span"
                 >
                     {username}
-                    <AccountCircle />
+                    <input
+                        accept="image/*"
+                        className={classes.input}
+                        id="icon-button-file"
+                        type="file"
+                        onChange={(e)=>{setPrevImage(URL.createObjectURL(e.target.files[0]));AddPorfilePicture(e)}}
+                        style={{display:'none'}}/>
+                    <label htmlFor="icon-button-file">
+
+                    <Avatar
+                        alt="Ted talk"
+                        src={prevImage?prevImage:null }
+                    />
+                    </label>
                 </IconButton>
                 <FormControlLabel
                     style={{marginLeft:8}}

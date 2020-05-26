@@ -1,5 +1,6 @@
 import ReactNotification from 'react-notifications-component'
 import { store } from 'react-notifications-component';
+import PropTypes from 'prop-types'
 export const Succes=(props)=>{
     store.addNotification({
         title: props.title,
@@ -51,5 +52,8 @@ function Notification(){
 
         </div>
     )
+}
+Notification.propTypes={
+    message:PropTypes.string
 }
 export default Notification

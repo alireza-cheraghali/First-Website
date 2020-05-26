@@ -1,11 +1,11 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import {Field, reduxForm} from 'redux-form';
 import {useSelector} from "react-redux";
 import axios from 'axios'
 import CustomInput from "../component/CustomInput";
 import {Button} from "@material-ui/core";
 import PasswordInput from "../component/PasswordInput";
-
+import Notification,{Succes,Error} from "../component/notification/Notification";
 const validate = values => {
     const errors = {}
     if (!values.username) {
@@ -21,12 +21,19 @@ const validate = values => {
 
 function Signup(props) {
     const signUpForm = useSelector(state => state.form.SignUp)
+    const [error,setError]=useState(null)
     const sendFormToDb = (e) => {
         e.preventDefault()
-        axios.post('http://localhost:8080/post', signUpForm.values
-        ).then(res => console.log(res)).catch(res => console.log(res))
+        axios.post('http://localhost:8080/signUp', signUpForm.values
+        ).then(res =>{setError(res.data);console.log(res.data)}).catch(res => console.log(res))
+        console.log(error)
     }
-
+    const sendNotification=()=>{
+       return  Error({message:'as'})
+    }
+    useEffect(()=>{
+        {error === null && sendNotification()}
+    },[error])
     return (
         <Fragment>
             <form onSubmit={(e) => sendFormToDb(e)} style={{margin: "10%40%"}}>
@@ -68,8 +75,10 @@ function Signup(props) {
                 <Button variant="contained" color="primary" type="submit" onClick={(e) => sendFormToDb(e)}>
                         Submit
                 </Button>
+                <Notification/>
             </form>
-
+            {error != null && <div>{error}</div>}
+            <button onClick={()=>Error({message:'ali'})}>AS</button>
         </Fragment>
     )
 }

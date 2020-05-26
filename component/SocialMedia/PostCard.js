@@ -10,7 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Skeleton from '@material-ui/lab/Skeleton';
-
+import {CardActions} from "@material-ui/core";
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
 const useStyles = makeStyles((theme) => ({
     card: {
         maxWidth: 345,
@@ -77,6 +79,14 @@ function Media(props) {
                     </Typography>
                 )}
             </CardContent>
+            <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                    <FavoriteIcon />
+                </IconButton>
+                <IconButton aria-label="share">
+                    <ShareIcon />
+                </IconButton>
+            </CardActions>
         </Card>
     );
 }

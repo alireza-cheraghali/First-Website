@@ -6,7 +6,6 @@ import CustomInput from "../CustomInput";
 import {Button,Typography,Card,CardContent,CardHeader} from "@material-ui/core";
 import {useRouter} from 'next/router'
 import Link from "next/link";
-import {setUserInformation} from "../../redux/actions/setUserInformation";
 import PasswordInput from "../PasswordInput";
 import Loading from "../Loading";
 import Grid from "@material-ui/core/Grid";
@@ -22,15 +21,16 @@ function Login() {
     const sendNotification=()=>{
         return  Error({message:error})
     }
-    const handleSubmit=async(e)=>{
+    const handleSubmit=(e)=>{
         e.preventDefault()
          if (loginForm.values) {
-            setLoading(true)
-             await axios.post('http://localhost:8080/login', loginForm.values).then((res) => {
+            setLoading(true);
+            setError(null)
+              axios.post('http://localhost:8080/login', loginForm.values).then((res) => {
                 res.data.token && Router.push('/main') && localStorage.setItem('token', res.data.token);
-                localStorage.setItem('username',res.data.userInformation.username)
-                res.data.Error && setError(res.data.Error)
-                setLoading(false);
+                  res.data.token && localStorage.setItem('username',res.data.userInformation.username)
+                  res.data.Error && setError(res.data.Error);
+                  setLoading(false);
             })
                 .catch((res) => console.log(res))
         }
@@ -38,12 +38,6 @@ function Login() {
             setUsername(true);
             setPassword(true)
         }
-        /*else if (!loginForm.values.username){
-            setUsername(true);
-        }else if (!loginForm.values.password){
-            setPassword(true)
-        }*/
-        console.log(username)
     }
     useEffect(()=>{
         {
@@ -53,7 +47,7 @@ function Login() {
     },[error])
     return(
         <Fragment>
-            <Paper elevation={3} style={{width:'80%'}}>
+            <Paper elevation={3} style={{width:'80%',margin:'5% auto'}}>
             <Grid container>
                 <Grid item xs={4}>
                     <img src={'/static/login.png'}/>
@@ -65,7 +59,7 @@ function Login() {
                                     component={CustomInput}
                                     error={username}
                                     helperText={username===true && 'Enter Your Username'}
-                                    label="Usernamesadsad"
+                                    label="Username"
                                     variant="outlined"
                                     type="text"
                                     placeholder={"Username..."}/>
@@ -94,7 +88,9 @@ function Login() {
                 </Grid>
             </Grid>
             <style jsx global>{`
-            
+            body{
+            /*background-color:blue*/
+            }
             `}
             </style>
             </Paper>
