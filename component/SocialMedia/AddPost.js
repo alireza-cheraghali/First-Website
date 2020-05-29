@@ -10,10 +10,14 @@ import UploadButton from "../Upload/UploadButton";
 import axios from "axios";
 import TypeOfPost from "./TypeOfPost";
 import {useSelector} from "react-redux";
+import ReactAudioPlayer from 'react-audio-player';
+
 function AddPost() {
     const [open,setOpen]=useState(false);
     const [uploadImage,setUploadImage]=useState(null)
     const [PreviewImage,setPrevieImage]=useState(null)
+    const [PreviewAudio,setPreviewAudio]=useState(null)
+    const [uploadAudio,setUploadAudio]=useState(null)
     const [Post,setPost]=useState(null)
     const [description,setDescription]=useState()
     const checkType=useSelector(state=>state.TypeOfPost)
@@ -21,12 +25,21 @@ function AddPost() {
         const formData=new FormData()
         /*formData.append('postImage',uploadImage);*/
         formData.append('description',description);
-        formData.append('post',Post);
-        axios.post(`http://localhost:8080/post${checkType}`,{description,Post}).then(res=>console.log(res.data)).catch(res=>res.data)
+        formData.append('imagePost',uploadImage);
+        formData.append('audioPost',uploadAudio);
+        if (checkType!=="Text"){
+            axios.post(`http://localhost:8080/post${checkType}`,formData).then(res=>console.log(res.data)).catch(res=>res.data)
+        }else{
+            axios.post(`http://localhost:8080/post${checkType}`,{description,Post}).then(res=>console.log(res.data)).catch(res=>res.data)
+        }
     }
     const previewImage=(e)=>{
         const createURL=URL.createObjectURL(e.target.files[0])
         setPrevieImage(createURL)
+    }
+    const previewAudios=(e)=>{
+        const createURL=URL.createObjectURL(e.target.files[0])
+        setPreviewAudio(createURL)
     }
 return(
     <Fragment>
@@ -51,7 +64,7 @@ return(
             لطفا صوت خود را آپلود کنید
             </p>
             <UploadButton onChange={(e) =>
-            {previewImage(e);setUploadImage(e.target.files[0])}}
+            {previewAudios(e);setUploadAudio(e.target.files[0])}}
             style={{marginTop: 10}}
             accept={"audio/*"}>
                 Upload
@@ -102,6 +115,12 @@ return(
         </IconButton>
     </Fragment>
     }
+        {PreviewAudio &&
+        <ReactAudioPlayer
+            src={PreviewAudio}
+            controls
+        />
+        }
 </PopPops>
     </Fragment>
 )
