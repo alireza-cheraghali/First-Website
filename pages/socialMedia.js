@@ -4,6 +4,7 @@ import axios from 'axios'
 import PostCard from "../component/SocialMedia/PostCard";
 import SelectMediaField from "../component/SocialMedia/SelectMediaField";
 import AddPost from "../component/SocialMedia/AddPost";
+import {GetAxios} from "../component/Axios";
 
 function socialMedia() {
     const [likes,setLikes]=useState(false);
@@ -12,7 +13,7 @@ function socialMedia() {
     const [loading,setLoading]=useState()
 
     useEffect(()=>{
-        setLoading(true)
+        setLoading(true);
         axios.get('http://localhost:8080/postImage').then(res=>{setPostsList(res.data);setLoading(false)}).catch(res=>console.log(res))
     },[open])
     console.log(postList)
