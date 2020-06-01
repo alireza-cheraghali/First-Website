@@ -63,12 +63,17 @@ function Login() {
                                     variant="outlined"
                                     type="text"
                                     placeholder={"Username..."}/>
+                                <Link href={'/forgetPassword'}>
+                                    <a>Forget Password?</a>
+                                </Link>
+                                <br/>
                                 <Field
                                     name="password"
                                     component={PasswordInput}
                                     error={password}
                                     label="Password"
                                     labelWidth={90}
+                                    style={{marginTop:5}}
                                     placeholder={"Password"}
                                     type="password" />
                                 <br/>
