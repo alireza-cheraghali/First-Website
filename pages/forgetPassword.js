@@ -5,24 +5,24 @@ import axios from 'axios'
 import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
+import Router from "next/router";
 function ForgetPassword() {
     const selectEmail=useSelector(state=>state.form.resetPasswordWithoutLogin)
     const [timer,setTimer]=useState(300)
     const [startTimer,setStartTimer]=useState(false)
     const createActivationCode=(e)=>{
         e.preventDefault()
-        let activeCode=Math.floor(Math.random()*1000000)
         {selectEmail.values
             ?
-            axios.post('http://localhost:8080/password/forgetPasswordWithoutLogin',{Email:selectEmail.values.Email,ActiveAccountCode:activeCode})
+            axios.post('http://localhost:8080/password/forgetPasswordWithoutLogin',{Email:selectEmail.values.Email})
                 .then(res=>{res.data.code ?setStartTimer(true):null})
                 .catch(res=>console.log(res+'Error'))
             :
             null}
     }
-    const sendActivationCode=()=>{
-        axios.post('http://localhost:8080/password/checkActiveCode',{ActiveCode:selectEmail.values.ActiveCode})
-            .then(res=>console.log(res))
+    const checkActiveCode=()=>{
+        axios.post('http://localhost:8080/password/checkActiveCode',{Email:selectEmail.values.Email,ActiveAccountCode:selectEmail.values.ActiveAccountCode})
+            .then(res=>{res.data.successful ?Router.push(`/changePassword?Email=${selectEmail.values.Email}`):null })
     }
     useEffect(()=>{
         var interval=null;
@@ -62,11 +62,11 @@ function ForgetPassword() {
             {startTimer===true &&
             <div>
             <Field
-                name="ActiveCode"
+                name="ActiveAccountCode"
                 component={CustomInput}
                 placeholder={"Active Code..."}/>
                 {timer} Seconds
-                <Button variant={"outlined"} color={"primary"}>Send</Button>
+                <Button variant={"outlined"} color={"primary"} onClick={()=>checkActiveCode()}>Send</Button>
             </div>
 
             }
