@@ -12,7 +12,8 @@ export const Succes=(props)=>{
         animationOut: ["animated", "fadeOut"],
         dismiss: {
             duration: 5000,
-            onScreen: true
+            onScreen: true,
+            showIcon:true,
         }
     })}
 export const Warning=(props)=>{
@@ -27,7 +28,8 @@ export const Warning=(props)=>{
         dismiss: {
             duration: 5000,
             onScreen: true,
-            pauseOnHover:true
+            pauseOnHover:true,
+            showIcon:true,
         }
     })}
 export const Error=(props)=>{
@@ -42,7 +44,8 @@ export const Error=(props)=>{
         dismiss: {
             duration: 5000,
             onScreen: true,
-            pauseOnHover:true
+            pauseOnHover:true,
+            showIcon:true,
         }
     })}
 function Notification(){

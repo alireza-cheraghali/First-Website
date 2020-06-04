@@ -10,7 +10,7 @@ import Router from "next/router";
 import Notification,{Error} from "../component/notification/Notification";
 function ForgetPassword() {
     const selectEmail=useSelector(state=>state.form.resetPasswordWithoutLogin)
-    const [timer,setTimer]=useState(300)
+    const [timer,setTimer]=useState(null)
     const [startTimer,setStartTimer]=useState(false)
     const [notificationError,setNotificationError]=useState(null)
     const createActivationCode=(e)=>{
@@ -18,7 +18,10 @@ function ForgetPassword() {
         {selectEmail.values
             ?
             axios.post('http://localhost:8080/password/forgetPasswordWithoutLogin',{Email:selectEmail.values.Email})
-                .then(res=>{res.data.code ?setStartTimer(true):null;res.data.Error ? setNotificationError(res.data.Error) && sendNotification() : null;console.log(res.data)})
+                .then(res=>{
+                    res.data.code ? setTimer(10) :null;
+                    res.data.code ? setStartTimer(true) :null;
+                    res.data.Error && setNotificationError(res.data.Error)})
                 .catch(res=>console.log(res+'Error'))
             :
             null}
@@ -27,7 +30,7 @@ function ForgetPassword() {
         axios.post('http://localhost:8080/password/checkActiveCode',{Email:selectEmail.values.Email,ActiveAccountCode:selectEmail.values.ActiveAccountCode})
             .then(res=>
             {res.data.successful ?Router.push(`/changePassword?Email=${selectEmail.values.Email}`) && sessionStorage.setItem('activeCode',true)  :null ;
-            res.data.Error ? setNotificationError(res.data.Error): null;console.log(res.data)
+            res.data.Error && setNotificationError(res.data.Error)
             })
     }
     const sendNotification=()=>{
@@ -38,9 +41,9 @@ function ForgetPassword() {
         if(startTimer){
         interval=setInterval(()=>setTimer(prevState=>prevState-1),1000)
         if (timer<=0){
-            clearInterval(interval)
+            clearInterval(interval);
             axios.put('http://localhost:8080/password/deleteExpireCode',{Email:selectEmail.values.Email})
-                .then(res=>console.log(res))
+                .finally(setStartTimer(false))
         }
         return ()=>{
             clearInterval(interval)
@@ -48,8 +51,13 @@ function ForgetPassword() {
         }
     },[timer,startTimer])
     useEffect(()=>{
-        {notificationError!=null && sendNotification()}
+        {
+            notificationError != null &&
+            sendNotification()
+            setNotificationError(null)
+        }
     },[notificationError])
+
     return(
         <Fragment>
         <Paper style={{
@@ -68,9 +76,10 @@ function ForgetPassword() {
                 label="Email"
                 placeholder="Email"
             />
-                {startTimer === false &&
+                {startTimer === false && timer!==0 &&
                 <button type="submit">Send Email</button>
                 }
+                {startTimer===false && timer===0 && <button type="submit">Resend Email</button>}
             </form>
             {startTimer===true &&
             <div>
