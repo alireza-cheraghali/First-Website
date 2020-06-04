@@ -7,24 +7,41 @@ import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import Router from "next/router";
+import Loading from "../component/Loading";
 import Notification,{Error} from "../component/notification/Notification";
 function ForgetPassword() {
     const selectEmail=useSelector(state=>state.form.resetPasswordWithoutLogin)
     const [timer,setTimer]=useState(null)
     const [startTimer,setStartTimer]=useState(false)
     const [notificationError,setNotificationError]=useState(null)
-    const createActivationCode=(e)=>{
+    const [loading,setLoading]=useState(false)
+    var hours;
+    var minutes;
+    var second;
+    if(timer!=null){
+    hours=Math.floor(timer/3600)
+    second=Math.floor(timer%60)
+    }
+    if(hours===0){
+        minutes=Math.floor(timer/60)
+        if (minutes<10){
+            minutes="0"+minutes
+        }
+    }
+    const createActivationCode=(e)=> {
         e.preventDefault()
-        {selectEmail.values
-            ?
-            axios.post('http://localhost:8080/password/forgetPasswordWithoutLogin',{Email:selectEmail.values.Email})
-                .then(res=>{
-                    res.data.code ? setTimer(10) :null;
-                    res.data.code ? setStartTimer(true) :null;
-                    res.data.Error && setNotificationError(res.data.Error)})
-                .catch(res=>console.log(res+'Error'))
-            :
-            null}
+        if (selectEmail.values){
+            setLoading(true)
+            axios.post('http://localhost:8080/password/forgetPasswordWithoutLogin', {Email: selectEmail.values.Email})
+                .then(res => {
+                    res.data.code ? setTimer(300) : null;
+                    res.data.code ? setStartTimer(true) : null;
+                    res.data.Error && setNotificationError(res.data.Error);
+                    setLoading(false)
+                })
+                .catch(res => console.log(res + 'Error'))
+                .finally(setLoading(false))
+            }
     }
     const checkActiveCode=()=>{
         axios.post('http://localhost:8080/password/checkActiveCode',{Email:selectEmail.values.Email,ActiveAccountCode:selectEmail.values.ActiveAccountCode})
@@ -87,12 +104,12 @@ function ForgetPassword() {
                 name="ActiveAccountCode"
                 component={CustomInput}
                 placeholder={"Active Code..."}/>
-                {timer} Seconds
+                <h1>{minutes}:{second}</h1>
                 <Button variant={"outlined"} color={"primary"} onClick={()=>checkActiveCode()}>Send</Button>
             </div>
-
             }
         </Paper>
+            <Loading loading={loading} onClick={()=>setLoading(false)}/>
             <Notification/>
         </Fragment>
     )
