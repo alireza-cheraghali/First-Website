@@ -7,7 +7,7 @@ const CustomInput=(props)=>(
                    variant={props.variant || 'outlined'}
                    placeholder={props.placeholder}
                    className={props.className}
-                   style={{marginBottom:10}}
+                   style={props.style || {marginBottom:10}}
                    type={props.type}
                    size={props.size}
                    disabled={props.disabled || false}
@@ -16,6 +16,7 @@ const CustomInput=(props)=>(
                    required={props.required}
                    value={props.Value}
                    autoFocus={props.autoFocus || false}
+                   multiline={props.multiline}
                    autoComplete={props.autoComplete || 'off'}/>
     </div>
 )
