@@ -6,7 +6,14 @@ import Button from "@material-ui/core/Button";
 function answerQuestion() {
     const [questionList,setQuestionList]=useState([])
     const [answerSheet,setAnswerSheet]=useState([])
-
+    const Answer=(i,a)=> {
+        var checkID=answerSheet.filter(id=>id.Question_ID===questionList[i].Question_ID)
+        if(checkID.length===0){
+            answerSheet.push({Question_ID: questionList[i].Question_ID, answer: a})
+        }else{
+            answerSheet.filter(id=>id.Question_ID===questionList[i].Question_ID ? id.answer=a : null)
+        }
+    }
     useEffect(()=>{
         axios.get("http://localhost:8080/question/getQuestion").then(res=>{setQuestionList(res.data);console.log(res)})
     },[])
@@ -15,49 +22,43 @@ function answerQuestion() {
             {questionList.length>=1 ?
                 <ol style={{direction:"rtl"}}>
                     {questionList.map((val,index) =>
-                        <div key={index}>
+                        <li key={index}>
                             <Typography variant={"h5"}>{val.Question}</Typography>
-                            <div>
+                            <div style={{display:"inline-flex"}}>
                             <Button
                                 variant={"contained"}
-                                color={"primary"}
+                                color={answerSheet.filter(val=>val.Question_ID===questionList[i].Question_ID && val.answer===1) ? "primary" : "secondary"}
                                 size={"small"}
-                                onClick={(e)=>{setAnswerSheet([...answerSheet,{Question_ID:val.Question_ID,option:1}])}}>
+                                onClick={(i,a)=>Answer(index,1)}>
                                 1
                             </Button>
-                                <Typography variant={"h6"}>{val.Option1}</Typography>
-                            </div>
-                            <div>
+                                <Typography variant={"h6"} style={{marginLeft:"40%",marginRight:'2%'}}>{val.Option1}</Typography>
                                 <Button
                                     variant={"contained"}
                                     color={"primary"}
                                     size={"small"}
-                                    onClick={(e)=>setAnswerSheet([...answerSheet,{Question_ID:val.Question_ID,option:2}])}>
+                                    onClick={(i,a)=>Answer(index,2)}>
                                     2
                                 </Button>
-                                <Typography variant={"h6"}>{val.Option2}</Typography>
-                            </div>
-                            <div>
+                                <Typography variant={"h6"} style={{marginLeft:"40%",marginRight:'2%'}}>{val.Option2}</Typography>
                                 <Button
                                     variant={"contained"}
                                     color={"primary"}
                                     size={"small"}
-                                    onClick={(e)=>setAnswerSheet([...answerSheet,{Question_ID:val.Question_ID,option:3}])}>
+                                    onClick={(i,a)=>Answer(index,3)}>
                                     3
                                 </Button>
-                                <Typography variant={"h6"}>{val.Option3}</Typography>
-                            </div>
-                            <div>
+                                <Typography variant={"h6"} style={{marginLeft:"40%",marginRight:'2%'}}>{val.Option3}</Typography>
                                 <Button
                                     variant={"contained"}
                                     color={"primary"}
                                     size={"small"}
-                                    onClick={(e)=>setAnswerSheet([...answerSheet,{Question_ID:val.Question_ID,option:4}])}>
+                                    onClick={(i,a)=>Answer(index,4)}>
                                     4
                                 </Button>
-                                <Typography variant={"h6"}>{val.Option4}</Typography>
+                                <Typography variant={"h6"} style={{marginLeft:"40%",marginRight:'2%'}}>{val.Option4}</Typography>
                             </div>
-                        </div>
+                        </li>
                     )}
                 </ol>
                 :

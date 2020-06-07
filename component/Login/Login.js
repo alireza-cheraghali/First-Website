@@ -28,9 +28,8 @@ function Login() {
             setError(null)
               axios.post('http://localhost:8080/login', loginForm.values).then((res) => {
                 res.data.token && Router.push('/main') && localStorage.setItem('token', res.data.token);
-                  res.data.token && localStorage.setItem('username',res.data.userInformation.username)
+                  res.data.token && localStorage.setItem('username',res.data.userInformation.UserName)
                   res.data.Error && setError(res.data.Error);
-
             })
                   .finally(setLoading(false))
         }
